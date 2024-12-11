@@ -1,0 +1,15 @@
+microservices-platform/
+├── services/
+│   ├── api-gateway/
+│   ├── user-service/
+│   ├── product-service/
+│   ├── order-service/
+│   └── notification-service/
+├── infrastructure/
+│   ├── terraform/
+│   ├── kubernetes/
+│   └── docker/
+├── shared/
+│   ├── types/
+│   └── utils/
+└── docker-compose.yml

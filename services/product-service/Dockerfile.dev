@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Add basic dependencies and MongoDB tools
+RUN apk add --no-cache \
+    bash \
+    mongodb-tools \
+    mongo-c-driver
+
+COPY package*.json ./
+RUN npm install
+
+# Copy wait-for-it script first and set permissions
+COPY wait-for-it.sh .
+RUN chmod +x wait-for-it.sh && \
+    sed -i 's/\r$//' wait-for-it.sh
+
+# Copy rest of the application
+COPY . .
+
+CMD /bin/bash ./wait-for-it.sh product-service-db npm run dev
