@@ -1,34 +1,36 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
 
-const options = {
+const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
       title: 'Product Service API',
       version: '1.0.0',
-      description: 'Product management service',
+      description: 'API documentation for the Product microservice'
     },
     servers: [
       {
-        url: process.env.SERVICE_URL || 'http://localhost:3002',
-      },
+        url: '/api/v1',
+        description: 'Product Service API'
+      }
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
+          bearerFormat: 'JWT'
+        }
+      }
     },
+    security: [{ bearerAuth: [] }]
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./src/routes/*.ts', './src/models/*.ts']
 };
 
-export const configureOpenAPI = (app: Express): void => {
+export const configureSwagger = (app: Express) => {
   const specs = swaggerJsdoc(options);
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 };

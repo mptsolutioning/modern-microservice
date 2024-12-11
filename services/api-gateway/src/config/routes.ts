@@ -21,35 +21,24 @@ const routes: Record<string, Options> = {
     pathRewrite: {
       '^/api/v1/products': '/api/v1/products'
     },
-    ws: true,
-    secure: false,
     onProxyReq: (proxyReq: ClientRequest, req: Request) => {
-      // Set user ID header first
+      // Set headers first
       if (req.user?.sub) {
         proxyReq.setHeader('X-User-Id', req.user.sub);
       }
 
-      // Handle JSON body if present
+      // Handle JSON body
       if (req.body && Object.keys(req.body).length > 0) {
-        const bodyData = JSON.stringify(req.body);
-        // Set content headers
+        const stringifiedBody = JSON.stringify(req.body);
         proxyReq.setHeader('Content-Type', 'application/json');
-        proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
-        // Write body at the end
-        proxyReq.end(bodyData);
+        proxyReq.setHeader('Content-Length', Buffer.byteLength(stringifiedBody));
+        // Write body to request
+        proxyReq.write(stringifiedBody);
       }
-
-      // Log after everything is set
-      console.log('[API Gateway] Proxying request:', {
-        method: req.method,
-        path: req.path,
-        target: process.env.PRODUCT_SERVICE_URL || 'http://product-service:3002',
-        headers: proxyReq.getHeaders(),
-        body: req.body
-      });
+      // Don't call end() here - let the proxy middleware handle it
     },
     onError: (err, req, res) => {
-      console.error('[API Gateway] Proxy error:', err);
+      console.error('Proxy error:', err);
       res.status(500).json({ error: 'Proxy error', details: err.message });
     }
   }

@@ -84,6 +84,11 @@ services:
     depends_on:
       product-service-db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   product-service-db:
     image: mongo:latest
@@ -118,8 +123,10 @@ services:
       - USER_SERVICE_URL=http://user-service:3001
       - PRODUCT_SERVICE_URL=http://product-service:3002
     depends_on:
-      - user-service
-      - product-service
+      product-service:
+        condition: service_started
+      user-service:
+        condition: service_started
 
 volumes:
   user-service-data:

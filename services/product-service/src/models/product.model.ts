@@ -1,21 +1,56 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-export interface IProduct extends mongoose.Document {
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       required:
+ *         - name
+ *         - description
+ *         - price
+ *         - category
+ *         - ownerId
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: Auto-generated MongoDB ID
+ *         name:
+ *           type: string
+ *           description: Product name
+ *         description:
+ *           type: string
+ *           description: Product description
+ *         price:
+ *           type: number
+ *           description: Product price
+ *         category:
+ *           type: string
+ *           description: Product category
+ *         ownerId:
+ *           type: string
+ *           description: ID of the user who created the product
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
+
+export interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
   category: string;
-  ownerId: mongoose.Types.ObjectId;
-  inStock: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  ownerId: string;
 }
 
-const productSchema = new Schema<IProduct>({
+const productSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   description: {
     type: String,
@@ -31,12 +66,8 @@ const productSchema = new Schema<IProduct>({
     required: true
   },
   ownerId: {
-    type: Schema.Types.ObjectId,
+    type: String,
     required: true
-  },
-  inStock: {
-    type: Boolean,
-    default: true
   }
 }, {
   timestamps: true

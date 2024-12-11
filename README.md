@@ -54,12 +54,32 @@ A demonstration of microservices architecture using Node.js, MongoDB, and Docker
    curl -X POST http://localhost:3000/api/v1/products \
      -H "Authorization: Bearer ${JWT_TOKEN}" \
      -H "Content-Type: application/json" \
-     -d '{
-       "name": "Test Product",
-       "description": "A test product",
+     --data-raw '{
+       "name": "Test Product 1",
+       "description": "A test product 1",
        "price": 99.99,
        "category": "test"
      }'
+
+   # Get all products (public route)
+   curl http://localhost:3000/api/v1/products
+
+   # Get product by ID
+   curl http://localhost:3000/api/v1/products/{id} \
+     -H "Authorization: Bearer ${JWT_TOKEN}"
+
+   # Update product
+   curl -X PUT http://localhost:3000/api/v1/products/{id} \
+     -H "Authorization: Bearer ${JWT_TOKEN}" \
+     -H "Content-Type: application/json" \
+     --data-raw '{
+       "name": "Updated Product",
+       "price": 149.99
+     }'
+
+   # Delete product
+   curl -X DELETE http://localhost:3000/api/v1/products/{id} \
+     -H "Authorization: Bearer ${JWT_TOKEN}"
    ```
 
 ## Testing the API Gateway

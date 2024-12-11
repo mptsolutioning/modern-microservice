@@ -19,6 +19,12 @@ const PUBLIC_ROUTES = [
 ];
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  // Allow GET requests to /api/v1/products without auth
+  if (req.path === '/api/v1/products' && req.method === 'GET') {
+    return next();
+  }
+
+  // Check other public routes
   if (PUBLIC_ROUTES.some(route => req.path.startsWith(route))) {
     return next();
   }

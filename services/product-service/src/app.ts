@@ -2,13 +2,19 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { productRoutes } from './routes/product.routes';
+import { errorHandler } from './middleware/error.middleware';
+import { configureSwagger } from './config/swagger';
 
 const app = express();
 
 // Middleware
-app.use(express.json());  // Make sure this is present
+app.use(express.json());  // Make sure this is first
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
+
+// Configure Swagger
+configureSwagger(app);
 
 // Debug logging
 app.use((req, res, next) => {
@@ -21,10 +27,11 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/v1/products', productRoutes);
 
-// Basic error handler
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({ error: 'Internal Server Error' });
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
+
+// Error handling middleware (must be last)
+app.use(errorHandler);
 
 export { app };
